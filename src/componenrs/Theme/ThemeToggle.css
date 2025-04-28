@@ -1,0 +1,26 @@
+.theme-toggle {
+    background-color: transparent;
+    border: none;
+    font-size: 1.4rem;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+    color: var(--color-text);
+    padding: 0.3rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  /* هنگام هاور */
+  .theme-toggle:hover {
+    transform: rotate(20deg) scale(1.1);
+    background-color: var(--color-border); /* در تم روشن */
+  }
+  
+  
+  /* تم تاریک - بک‌گراند هاور روشن‌تر */
+  body.dark .theme-toggle:hover {
+    background-color: var(--color-border); /* در تم تاریک */
+  }
+  

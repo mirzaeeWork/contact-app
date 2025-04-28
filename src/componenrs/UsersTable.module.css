@@ -1,0 +1,75 @@
+/* UsersTable.module.css */
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: center;
+  }
+
+  .th{
+    font-size: 18px;
+    font-weight: 700;
+  }
+
+  
+  .th,
+  .td {
+    border-bottom: 1px solid var(--color-border);
+    padding: 12px;
+  }
+
+  .tr:hover{
+    background-color: var(--color-border);
+  }
+
+  .tdActions{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .buttonEdit {
+    background-color: var(--color-success);
+    color: var(--color-surface);
+    margin: 0 5px;
+    border-radius: 5px;
+    padding: 5px 10px;
+    border: none;
+    cursor: pointer;
+  }
+
+  .buttonEdit:hover{
+    background-color: var(--color-success-hover);
+    color: var(--color-surface-hover);
+  }
+  
+  .buttonDelete {
+    background-color: var(--color-error);
+    color: var(--color-text);
+    margin: 0 10px;
+    border-radius: 5px;
+    padding: 5px 10px;
+    border: none;
+    cursor: pointer;
+  }
+
+  .buttonDelete:hover{
+    background-color: var(--color-error-hover);
+    color: var(--color-text-hover);
+  }
+
+  .td input {
+    display: none;
+  }
+
+  .td label{
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 1px solid var(--color-text-hover);
+  }
+
+  .td .labelChecked {
+    background-color: var(--color-error);
+  }
+  

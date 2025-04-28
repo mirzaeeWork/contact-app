@@ -1,0 +1,21 @@
+.search{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    width: 600px;
+    background-color: var(--color-border);
+    color: var(--color-text);  
+    border-radius: 10px;
+}
+
+.search input{
+    width: 100%;
+    border: none;
+    outline: none;
+}
+
+
+
+
+
