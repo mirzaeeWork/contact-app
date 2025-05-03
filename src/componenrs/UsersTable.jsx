@@ -2,27 +2,35 @@ import styles from "./UsersTable.module.css";
 import { useDeleteGroupUsers } from "../hook/useDeleteGroupUsers";
 import { useState } from "react";
 import { useUser } from "../hook/useUser";
-import {
-  callApi,
-  deleteUser,
-  editUser,
-  getAllUsers,
-} from "../services/userActions";
+import { deleteUser, editUser } from "../services/userActions";
 import Modal from "./Modal";
 import Message from "./Message";
 import ModalUser from "./ModalUser";
 import UserRow from "./UserRow";
+import useCallApi from "../services/CallApi";
+import {
+  getSortIcon,
+  handleBackUpdateUser,
+  handleCancleDelete,
+  handleDeleteUser,
+  handleEditUser,
+  sortData,
+} from "../helper/helper";
 
 function UsersTable({ users, setUsers }) {
-  const [state, dispatch] = useUser();
+  const [state] = useUser();
+  const [, callApi_getAllUsers] = useCallApi({ skip: true });
   const [stateDeleteGroupUsers, dispatchDeleteGroupUsers] =
     useDeleteGroupUsers();
 
-  const [openModal, setOpenModal] = useState(false);
-  const [openModalUser, setOpenModalUser] = useState(false);
-  const [infoUser, setInfoUser] = useState(null);
+  const [uiState, setUiState] = useState({
+    openModal: false,
+    openModalUser: false,
+    infoUser: null,
+    sortDirection: state.sortDirection,
+  });
 
-  const [sortDirection, setSortDirection] = useState("asc");
+
 
   const handleCheck = (id) => {
     if (stateDeleteGroupUsers.usersIds.includes(id)) {
@@ -36,66 +44,42 @@ function UsersTable({ users, setUsers }) {
   };
 
   const handleDelete = async () => {
-    await callApi({ dispatch, api: deleteUser, defaultData: infoUser });
-    await callApi({ dispatch, api: getAllUsers, message: "کاربر حذف شد" });
-    setUsers(state.data);
-    setInfoUser(null);
-  };
+    await callApi_getAllUsers({
+      api: deleteUser,
+      defaultData: uiState.infoUser,
+      message: "کاربر حذف شد",
+      sortDirection:uiState.sortDirection
+    });
 
-  const handleCancleDelete = () => {
-    setOpenModal(false);
-    setInfoUser(null);
-  };
-
-  const handleBackUpdateUser = () => {
-    setOpenModalUser(false);
-    setInfoUser(null);
+    setUsers(state.data)
+    setUiState((prev) => ({ ...prev, infoUser: null }));
   };
 
   const onSubmitUser = async (user) => {
-    await callApi({ dispatch, api: editUser, defaultData: user });
-    await callApi({ dispatch, api: getAllUsers, message: "کاربر ویرایش شد" });
-    setUsers(state.data);
-    setOpenModalUser(false);
-    setInfoUser(null);
-  };
-
-  const handleEditUser = (user) => {
-    setOpenModalUser(true);
-    setInfoUser(user);
-  };
-
-  const handleDeleteUser = (userId) => {
-    setOpenModal(true);
-    setInfoUser(userId);
-  };
-
-  const sortData = () => {
-    const direction = sortDirection === "asc" ? "desc" : "asc";
-    setSortDirection(direction);
-
-    const sortedUsers = [...users].sort((a, b) => {
-      if (a.firstName < b.firstName) return direction === "asc" ? -1 : 1;
-      if (a.firstName > b.firstName) return direction === "asc" ? 1 : -1;
-      return 0;
+    await callApi_getAllUsers({
+      api: editUser,
+      defaultData: user,
+      message: "کاربر ویرایش شد",
+      sortDirection:uiState.sortDirection
     });
-
-    setUsers(sortedUsers);
-  };
-
-  const getSortIcon = () => {
-    return sortDirection === "asc" ? "↑" : "↓";
+    setUsers(state.data)
+    setUiState((prev) => ({ ...prev, openModalUser: false, infoUser: null }));
   };
 
   return (
     <>
       {state.message && <Message text={state.message} />}
-
       <table className={styles.table}>
         <thead>
           <tr>
-            <th className={styles.th} onClick={sortData} style={{ cursor: "pointer" }}>
-              نام و نام خانوادگی {getSortIcon()}
+            <th
+              className={styles.th}
+              onClick={() =>
+                sortData(uiState.sortDirection, setUiState, users, setUsers)
+              }
+              style={{ cursor: "pointer" }}
+            >
+              نام و نام خانوادگی {getSortIcon(uiState.sortDirection)}
             </th>
             <th className={styles.th}>ایمیل</th>
             <th className={styles.th}>عملیات</th>
@@ -108,27 +92,27 @@ function UsersTable({ users, setUsers }) {
               key={index}
               user={user}
               stateDeleteGroupUsers={stateDeleteGroupUsers}
-              onEdit={handleEditUser}
-              onDelete={handleDeleteUser}
+              onEdit={() => handleEditUser(setUiState, user)}
+              onDelete={() => handleDeleteUser(setUiState, user.id)}
               handleCheck={handleCheck}
             />
           ))}
         </tbody>
       </table>
 
-      {openModal && (
+      {uiState.openModal && (
         <Modal
           handleDelete={handleDelete}
-          handleCancle={handleCancleDelete}
+          handleCancle={() => handleCancleDelete(setUiState)}
           اheader="حذف کاربر"
           mainMessage="آیا مطمئن هستید که می خواهید این کاربر را حذف کنید؟"
         />
       )}
 
-      {openModalUser && (
+      {uiState.openModalUser && (
         <ModalUser
-          handleUser={infoUser}
-          handleCancle={handleBackUpdateUser}
+          handleUser={uiState.infoUser}
+          handleCancle={() => handleBackUpdateUser(setUiState)}
           btnText="ویرایش"
           onSubmitUser={onSubmitUser}
         />

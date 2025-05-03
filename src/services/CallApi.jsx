@@ -1,22 +1,38 @@
 import { useEffect } from "react";
 import { useUser } from "../hook/useUser";
+import { getAllUsers } from "./userActions";
 
-export default function useCallApi({ api, defaultData=null,message }) {
+export default function useCallApi({
+  api,
+  defaultData = null,
+  message,
+  skip = false,
+}) {
   const [state, dispatch] = useUser();
 
+  const callApi = async (
+   { customApi = api,
+    customData = defaultData || null,
+    customMessage = message || null,
+    sortDirection="asc"} = {} 
+  ) => {
+    dispatch({ type: "REQUEST" });
+    try {
+      const data = await customApi(customData);
+      dispatch({ type: "SUCCESS", payload: { data, message: customMessage,sortDirection } });
+    } catch (error) {
+      dispatch({ type: "ERROR", payload: error.message });
+    }
+  };
+
+  const callApi_getAllUsers = async ({ api, defaultData,message,sortDirection } = {}) => {
+    await  callApi({ customApi : api, customData : defaultData });
+    await callApi({ customApi :getAllUsers, customMessage : message,sortDirection }); 
+  };
+
   useEffect(() => {
-    const callApi = async () => {
-      dispatch({ type: "REQUEST" });
-      try {
-        const data = await api(defaultData);
-        dispatch({ type: "SUCCESS", payload: {data,message} });
-      } catch (error) {
-        dispatch({ type: "ERROR", payload: error.message });
-      }
-    };
-    callApi();
+    if (!skip) callApi();
   }, []);
 
-  return [state, dispatch];
+  return [state, callApi_getAllUsers];
 }
-

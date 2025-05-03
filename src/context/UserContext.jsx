@@ -4,17 +4,40 @@ const initialState = {
   data: null,
   loading: false,
   error: null,
-  message:""
+  message: "",
+  sortDirection: "asc",
 };
 
 const reducer = (state, action) => {
   switch (action.type) {
     case "REQUEST":
-      return { data: null, loading: true, error: null,message:"" };
-    case "SUCCESS":
-      return { error: null, loading: false, data: action.payload.data,message:action.payload.message };
+      return { data: null, loading: true, error: null, message: "" };
+    case "SUCCESS": {
+      const {
+        data,
+        message = "",
+        sortDirection = "asc",
+      } = action.payload || {};
+
+      const isArray = Array.isArray(data);
+
+      const sortedData = isArray
+        ? [...data].sort(
+            (a, b) =>
+              a.firstName.localeCompare(b.firstName) *
+              (sortDirection === "asc" ? 1 : -1)
+          )
+        : state.data;
+      return {
+        error: null,
+        loading: false,
+        data: sortedData,
+        message,
+        sortDirection,
+      };
+    }
     case "ERROR":
-      return { data: null, loading: false, error: action.payload,message:"" };
+      return { data: null, loading: false, error: action.payload, message: "" };
     default:
       throw new Error("Invalid action type");
   }

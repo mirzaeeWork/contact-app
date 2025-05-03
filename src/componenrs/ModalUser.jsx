@@ -56,7 +56,6 @@ function ModalUser({ handleUser = {}, handleCancle, btnText, onSubmitUser }) {
 
     setError(newErrors);
     if (!Object.values(newErrors).some((error) => error)) {
-      console.log("user", user);
       onSubmitUser(user);
     }
   };

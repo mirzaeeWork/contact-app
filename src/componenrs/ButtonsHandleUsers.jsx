@@ -1,33 +1,30 @@
 import { useDeleteGroupUsers } from "../hook/useDeleteGroupUsers";
 import {
   addUser,
-  callApi,
   deleteUsers,
-  getAllUsers,
 } from "../services/userActions";
 import { useUser } from "../hook/useUser";
 import Message from "./Message";
 import { useState } from "react";
 import Modal from "./Modal";
 import ModalUser from "./ModalUser";
+import useCallApi from "../services/CallApi";
 
 function DeleteGroup({ handleDeleteGroup, setUsers }) {
   const [stateDeleteGroupUsers, dispatchDeleteGroupUsers] =
     useDeleteGroupUsers();
-  const [state, dispatch] = useUser();
+  const [state] = useUser();
+    const [,callApi_getAllUsers] = useCallApi({ skip: true });  
   const [openModal, setOpenModal] = useState(false);
   const [error, setError] = useState("");
   const [openModalUser, setOpenModalUser] = useState(false);
 
   const handleDeleteGroupUsers = async () => {
     setOpenModal(false);
-
-    await callApi({
-      dispatch,
+    await callApi_getAllUsers({
       api: deleteUsers,
       defaultData: stateDeleteGroupUsers.usersIds,
     });
-    await callApi({ dispatch, api: getAllUsers });
     setUsers(state.data);
     dispatchDeleteGroupUsers({
       type: "CLOSE_DELETE_GROUP",
@@ -63,12 +60,12 @@ function DeleteGroup({ handleDeleteGroup, setUsers }) {
   };
 
   const onSubmitUser = async (user) => {
-    await callApi({
-      dispatch,
+    await callApi_getAllUsers({
       api: addUser,
       defaultData: user,
+      message: "کاربر اضافه شد"
     });
-    await callApi({ dispatch, api: getAllUsers, message: "کاربر اضافه شد" });
+
     setUsers(state.data);
     setOpenModalUser(false);
   };

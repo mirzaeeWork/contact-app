@@ -1,41 +1,23 @@
 import styles from "./UsersTable.module.css";
 
-function UserRow({ 
-  user, 
-  stateDeleteGroupUsers, 
-  onEdit, 
-  onDelete, 
-  handleCheck 
+function UserRow({
+  user,
+  stateDeleteGroupUsers,
+  onEdit,
+  onDelete,
+  handleCheck,
 }) {
   return (
     <tr className={styles.tr}>
-      <td className={styles.td}>
-        {`${user.firstName} ${user.lastName}`}
-      </td>
-      <td className={styles.td}>
-        {user.email}
-      </td>
+      <td className={styles.td}>{`${user.firstName} ${user.lastName}`}</td>
+      <td className={styles.td}>{user.email}</td>
       <td className={`${styles.td} ${styles.tdActions}`}>
-        <button
-          className={styles.buttonEdit}
-          onClick={() => onEdit(user)}
-        >
-          ویرایش
-        </button>
-
-        <button
-          className={styles.buttonDelete}
-          onClick={() => onDelete(user.id)}
-        >
-          حذف
-        </button>
-
-        {stateDeleteGroupUsers.IsDeleteGroup && (
+        {stateDeleteGroupUsers.IsDeleteGroup ? (
           <>
             <input
               type="checkbox"
               id={`checkbox-${user.id}`}
-              onClick={() => handleCheck(user.id)}
+              onClick={()=>handleCheck(user.id)}
             />
             <label
               className={`
@@ -47,6 +29,19 @@ function UserRow({
               `}
               htmlFor={`checkbox-${user.id}`}
             ></label>
+          </>
+        ) : (
+          <>
+            <button className={styles.buttonEdit} onClick={onEdit}>
+              ویرایش
+            </button>
+
+            <button
+              className={styles.buttonDelete}
+              onClick={onDelete}
+            >
+              حذف
+            </button>
           </>
         )}
       </td>

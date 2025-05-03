@@ -30,5 +30,41 @@ const validateField = (name, value, placeholder) => {
     mobile: "موبایل",
   };
 
+  const sortData = (sortDirection,setUiState,users=[],setUsers) => {
+    const direction = sortDirection === "asc" ? "desc" : "asc";
+    setUiState(prev => ({ ...prev, sortDirection: direction }));
 
-  export { validateField,placeholders };
+    const sortedUsers = [...users].sort((a, b) => {
+      if (a.firstName < b.firstName) return direction === "asc" ? -1 : 1;
+      if (a.firstName > b.firstName) return direction === "asc" ? 1 : -1;
+      return 0;
+    });
+
+    setUsers(sortedUsers);
+  };
+
+  const handleCancleDelete = (setUiState) => {
+    setUiState(prev => ({ ...prev,openModal: false ,infoUser: null }));
+  };
+
+  const handleBackUpdateUser = (setUiState) => {
+    setUiState(prev => ({ ...prev,openModalUser: false ,infoUser: null }));
+  };
+
+
+  const handleEditUser = (setUiState,user) => {
+    setUiState(prev => ({ ...prev,openModalUser: true ,infoUser: user }));
+  };
+
+  const handleDeleteUser = (setUiState,userId) => {
+    setUiState(prev => ({ ...prev,openModal: true ,infoUser: userId }));
+  };
+
+  const getSortIcon = (sortDirection) => {
+    return sortDirection === "asc" ? "↑" : "↓";
+  };
+
+
+
+
+  export { validateField,placeholders,sortData,handleCancleDelete,handleBackUpdateUser,handleEditUser,handleDeleteUser,getSortIcon };
