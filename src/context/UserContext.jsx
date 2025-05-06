@@ -11,7 +11,7 @@ const initialState = {
 const reducer = (state, action) => {
   switch (action.type) {
     case "REQUEST":
-      return { data: null, loading: true, error: null, message: "" };
+      return {...state, loading: true, error: null, message: "" };
     case "SUCCESS": {
       const {
         data,
@@ -37,7 +37,7 @@ const reducer = (state, action) => {
       };
     }
     case "ERROR":
-      return { data: null, loading: false, error: action.payload, message: "" };
+      return { ...state, loading: false, error: action.payload, message: "" };
     default:
       throw new Error("Invalid action type");
   }

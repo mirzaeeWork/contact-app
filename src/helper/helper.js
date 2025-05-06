@@ -1,34 +1,35 @@
-const validateField = (name, value, placeholder) => {
-    let errorMessage = "";
+import * as yup from "yup";
+import { phoneNumberValidator  } from "@persian-tools/persian-tools";
 
-    if (value.trim().length < 3) {
-      errorMessage = `${placeholder} باید حداقل ۳ کاراکتر باشد.`;
-    }
+const schemaUser = yup.object().shape({
+  firstName: yup
+    .string()
+    .required("نام الزامی است")
+    .min(3, "نام باید حداقل ۳ کاراکتر باشد"),
 
-    if (name === "email") {
-        const emailRegex = /^[\w.-]+@([\w-]+\.)+[\w-]{2,4}$/;
-        if (!emailRegex.test(value)) {
-        errorMessage = "ایمیل معتبر نیست.";
-      }
-    }
+  lastName: yup
+    .string()
+    .required("نام خانوادگی الزامی است")
+    .min(3, "نام خانوادگی باید حداقل ۳ کاراکتر باشد"),
 
-    if (name === "mobile") {
-      const mobileRegex = /^09\d{9}$/;
-      if (!mobileRegex.test(value)) {
-        errorMessage = "شماره موبایل باید با 09 شروع شود و فقط 11 رقم عددی باشد.";
-      }
-    }
+  email: yup
+    .string()
+    .required("ایمیل الزامی است")
+    .email("ایمیل معتبر نیست"),
 
-    return errorMessage;
-  };
+  job: yup
+    .string()
+    .required("شغل الزامی است")
+    .min(3, "شغل باید حداقل ۳ کاراکتر باشد"),
 
-  const placeholders = {
-    firstName: "نام",
-    lastName: "نام خانوادگی",
-    email: "ایمیل",
-    job: "شغل",
-    mobile: "موبایل",
-  };
+  mobile: yup
+    .string()
+    .required("شماره موبایل الزامی است")
+    .test("is-valid-iranian-mobile", "شماره موبایل معتبر نیست", (value) =>
+      phoneNumberValidator(value || "")
+    ),
+});
+
 
   const sortData = (sortDirection,setUiState,users=[],setUsers) => {
     const direction = sortDirection === "asc" ? "desc" : "asc";
@@ -67,4 +68,4 @@ const validateField = (name, value, placeholder) => {
 
 
 
-  export { validateField,placeholders,sortData,handleCancleDelete,handleBackUpdateUser,handleEditUser,handleDeleteUser,getSortIcon };
+  export { schemaUser,sortData,handleCancleDelete,handleBackUpdateUser,handleEditUser,handleDeleteUser,getSortIcon };

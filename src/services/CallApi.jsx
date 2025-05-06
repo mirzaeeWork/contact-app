@@ -10,24 +10,47 @@ export default function useCallApi({
 }) {
   const [state, dispatch] = useUser();
 
-  const callApi = async (
-   { customApi = api,
+  const callApi = async ({
+    customApi = api,
     customData = defaultData || null,
     customMessage = message || null,
-    sortDirection="asc"} = {} 
-  ) => {
+    sortDirection = "asc",
+  } = {}) => {
     dispatch({ type: "REQUEST" });
     try {
       const data = await customApi(customData);
-      dispatch({ type: "SUCCESS", payload: { data, message: customMessage,sortDirection } });
+      dispatch({
+        type: "SUCCESS",
+        payload: { data, message: customMessage, sortDirection },
+      });
+      return true;
     } catch (error) {
       dispatch({ type: "ERROR", payload: error.message });
+      return false;
     }
   };
 
-  const callApi_getAllUsers = async ({ api, defaultData,message,sortDirection } = {}) => {
-    await  callApi({ customApi : api, customData : defaultData });
-    await callApi({ customApi :getAllUsers, customMessage : message,sortDirection }); 
+  const callApi_getAllUsers = async ({
+    api,
+    defaultData,
+    message,
+    sortDirection,
+  } = {}) => {
+    try {
+      const isSuccessful = await callApi({
+        customApi: api,
+        customData: defaultData,
+      });
+      if (isSuccessful) {
+        await callApi({
+          customApi: getAllUsers,
+          customMessage: message,
+          sortDirection,
+        });
+      }
+    } catch (error) {
+      console.error("Error in callApi_getAllUsers:", error.message);
+    }
   };
 
   useEffect(() => {

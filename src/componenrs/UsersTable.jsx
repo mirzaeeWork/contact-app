@@ -30,8 +30,6 @@ function UsersTable({ users, setUsers }) {
     sortDirection: state.sortDirection,
   });
 
-
-
   const handleCheck = (id) => {
     if (stateDeleteGroupUsers.usersIds.includes(id)) {
       dispatchDeleteGroupUsers({
@@ -48,10 +46,10 @@ function UsersTable({ users, setUsers }) {
       api: deleteUser,
       defaultData: uiState.infoUser,
       message: "کاربر حذف شد",
-      sortDirection:uiState.sortDirection
+      sortDirection: uiState.sortDirection,
     });
 
-    setUsers(state.data)
+    setUsers(state.data);
     setUiState((prev) => ({ ...prev, infoUser: null }));
   };
 
@@ -60,9 +58,11 @@ function UsersTable({ users, setUsers }) {
       api: editUser,
       defaultData: user,
       message: "کاربر ویرایش شد",
-      sortDirection:uiState.sortDirection
+      sortDirection: uiState.sortDirection,
     });
-    setUsers(state.data)
+
+    setUsers(state.data );
+    
     setUiState((prev) => ({ ...prev, openModalUser: false, infoUser: null }));
   };
 

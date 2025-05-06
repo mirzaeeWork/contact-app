@@ -19,20 +19,20 @@ export default function App() {
   }, [state.data]);
 
   if (state.loading) return <Loading />;
-  if (state.error) return <Message />;
 
   const handleDeleteGroup = () => {
-
     dispatchDeleteGroupUsers({type:"OPEN_DELETE_GROUP"})
   };
 
   return (
     <>
+    {state.error && <Message />}
       <div
         style={{
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
+          marginBottom: "20px",
         }}
       >
         <Search data={state.data} setUsers={setUsers} />

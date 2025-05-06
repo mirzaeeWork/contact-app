@@ -1,70 +1,37 @@
-import { useState } from "react";
 import styles from "./ModalUser.module.css";
-import InputField from "./InputField"; // ایمپورت کامپوننت جدید
-import { placeholders, validateField } from "../helper/helper";
+import InputField from "./InputField";
+import { schemaUser } from "../helper/helper";
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
 
 function ModalUser({ handleUser = {}, handleCancle, btnText, onSubmitUser }) {
   const { id, firstName, lastName, email, job, mobile } = handleUser;
 
-  const [user, setUser] = useState({
-    id: id || Date.now().toString(),
-    firstName: firstName || "",
-    lastName: lastName || "",
-    email: email || "",
-    job: job || "",
-    mobile: mobile || "",
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    defaultValues: {
+      id: id || Date.now().toString(),
+      firstName: firstName || "",
+      lastName: lastName || "",
+      email: email || "",
+      job: job || "",
+      mobile: mobile || "",
+    },
+    resolver: yupResolver(schemaUser),
+    mode: "onBlur",
   });
 
-  const [error, setError] = useState({
-    firstName: "",
-    lastName: "",
-    email: "",
-    job: "",
-    mobile: "",
-  });
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-  
-    if (name === "mobile") {
-      const onlyNumbers = value.replace(/\D/g, ""); // فقط عدد بگیر
-      const limitedNumbers = onlyNumbers.slice(0, 11); // حداکثر 11 رقم
-      setUser((prev) => ({ ...prev, [name]: limitedNumbers }));
-    } else {
-      setUser((prev) => ({ ...prev, [name]: value }));
-    }
-  };
-  
-  const handleBlur = (e) => {
-    const { name, value, placeholder } = e.target;
-    const errorText = validateField(name, value, placeholder);
-    setError((prev) => ({ ...prev, [name]: errorText }));
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-
-    let newErrors = {};
-
-    Object.keys(user).forEach((key) => {
-      if (key !== "id") {
-        const placeholder = placeholders[key];
-        const errorText = validateField(key, user[key], placeholder);
-        newErrors[key] = errorText;
-      }
-    });
-
-    setError(newErrors);
-    if (!Object.values(newErrors).some((error) => error)) {
-      onSubmitUser(user);
-    }
+  const onSubmit = (data) => {
+    onSubmitUser(data);
   };
 
   return (
     <div className={styles.modal}>
       <div className={styles.bgModal} onClick={handleCancle} />
-
-      <form className={styles.modalContent} onSubmit={handleSubmit}>
+      <form className={styles.modalContent} onSubmit={handleSubmit(onSubmit)}>
         <button
           type="button"
           onClick={handleCancle}
@@ -72,50 +39,41 @@ function ModalUser({ handleUser = {}, handleCancle, btnText, onSubmitUser }) {
         >
           X
         </button>
+
         <InputField
+          register={register}
           name="firstName"
           placeholder="نام"
-          value={user.firstName}
-          onChange={handleChange}
-          onBlur={handleBlur}
-          error={error.firstName}
+          error={errors.firstName}
         />
 
         <InputField
+          register={register}
           name="lastName"
           placeholder="نام خانوادگی"
-          value={user.lastName}
-          onChange={handleChange}
-          onBlur={handleBlur}
-          error={error.lastName}
+          error={errors.lastName}
         />
 
         <InputField
+          register={register}
           name="email"
           placeholder="ایمیل"
-          value={user.email}
-          onChange={handleChange}
-          onBlur={handleBlur}
-          error={error.email}
+          error={errors.email}
         />
 
         <InputField
+          register={register}
           name="job"
           placeholder="شغل"
-          value={user.job}
-          onChange={handleChange}
-          onBlur={handleBlur}
-          error={error.job}
+          error={errors.job}
         />
 
         <InputField
+          register={register}
           name="mobile"
           placeholder="موبایل"
-          value={user.mobile}
-          onChange={handleChange}
-          onBlur={handleBlur}
-          error={error.mobile}
-          inputMode="numeric"
+          error={errors.mobile}
+          type="tel"
         />
 
         <div>
